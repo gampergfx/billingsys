@@ -3,5 +3,4 @@
   &lt;Assembly Path="C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.Drawing.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Windows\Microsoft.NET\Framework\v4.0.30319\System.Windows.Forms.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Windows\Microsoft.NET\assembly\GAC_MSIL\PresentationFramework\v4.0_4.0.0.0__31bf3856ad364e35\PresentationFramework.dll" /&gt;&#xD;
-  &lt;Assembly Path="C:\Projects\HandwritingInstituteBillingSystem_beta\HandwritingInstituteBillingSystem\packages\DocX.1.0.0.19\lib\net40\DocX.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>

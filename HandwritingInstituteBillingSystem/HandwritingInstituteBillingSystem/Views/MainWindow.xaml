@@ -32,9 +32,6 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Trash" Margin="2">
-                <Grid Height="auto" Width="auto">
-                    <views:TrashUserControl></views:TrashUserControl>
-                </Grid>
             </TabItem>
             <TabItem Header="Report" Margin="2">
                 <Grid Height="auto" Width="auto">
