@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Drawing.Printing;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
@@ -20,6 +18,7 @@ namespace HandwritingInstituteBillingSystem.ViewModels
         private string _phone;
         private CourseDetails _course;
         private double _amountPaid;
+        private double _totalAmountPaid;
         private string _cashier;
         private string _billNo;
         private double _courseFee;
@@ -27,6 +26,7 @@ namespace HandwritingInstituteBillingSystem.ViewModels
         private double _balance;
         private PayMode _modeOfPayment;
         private string _notes;
+        private long _userUniqueId = -1;
 
 
         public NewEntryViewModel()
@@ -80,6 +80,23 @@ namespace HandwritingInstituteBillingSystem.ViewModels
             }
         }
 
+        public string AmountPaidString
+        {
+            get { return string.Empty; }
+            set
+            {
+                double r;
+                if(double.TryParse(value,out r))
+                {
+                    _amountPaid = r;
+                    NotifyPropertyChanged();
+                    NotifyPropertyChanged(nameof(Balance));
+                    NotifyPropertyChanged(nameof(TotalAmountPaid));
+                    return;
+                }
+                _amountPaid = 0;
+            }
+        }
 
         public double AmountPaid
         {
@@ -89,6 +106,34 @@ namespace HandwritingInstituteBillingSystem.ViewModels
                 _amountPaid = value;
                 NotifyPropertyChanged();
                 NotifyPropertyChanged(nameof(Balance));
+                NotifyPropertyChanged(nameof(TotalAmountPaid));
+            }
+        }
+
+        public double TotalAmountPaid
+        {
+            get
+            {
+                return
+                  _totalAmountPaid + _amountPaid;
+            }
+            set
+            {
+                _totalAmountPaid = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(Balance));
+            }
+        }
+
+        public double TotalAmountPaidForView
+        {
+            get
+            {
+                return
+                    _totalAmountPaid;
+            }
+            set
+            {
             }
         }
 
@@ -140,7 +185,7 @@ namespace HandwritingInstituteBillingSystem.ViewModels
         {
             get
             {
-                _balance = ((double)_course.Fee - _amountPaid);
+                _balance = ((double)_course.Fee - (_totalAmountPaid + _amountPaid));
                 if (_balance == 0)
                 {
                     return "0.0";
@@ -175,9 +220,6 @@ namespace HandwritingInstituteBillingSystem.ViewModels
         }
         public event PropertyChangedEventHandler PropertyChanged;
 
-        // This method is called by the Set accessor of each property.
-        // The CallerMemberName attribute that is applied to the optional propertyName
-        // parameter causes the property name of the caller to be substituted as an argument.
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             if (PropertyChanged != null)
@@ -186,26 +228,8 @@ namespace HandwritingInstituteBillingSystem.ViewModels
             }
         }
 
-        private void  InitNew()
+        private void InitNew()
         {
-            //var courseDetailsConfig = ConfigReader.GetCourseDetailsConfigs()[0];
-            //var fee = (double)courseDetailsConfig.Fee;
-            //return new NewEntryViewModel()
-            //{
-            //    _name = string.Empty,
-            //    _phone = string.Empty,
-            //    _cashier = AppSettings.Default.CasherName,
-            //    _course = courseDetailsConfig,
-            //    _modeOfPayment = ConfigReader.GetPayModeConfigs()[0],
-            //    _billNo = BillNoGenerator.Get(),
-            //    _amountPaid = 0,
-            //    _balance = fee,
-            //    _timeStamp = DateTime.Now.ToString("dd/MM/yyyy hh:mm tt"),
-            //    _notes = string.Empty,
-            //    _center = ConfigReader.GetCenterDetailsConfigs()[0],
-            //    _courseFee = fee
-            //};
-
             _name = string.Empty;
             _phone = string.Empty;
             _cashier = AppSettings.Default.CasherName;
@@ -216,9 +240,9 @@ namespace HandwritingInstituteBillingSystem.ViewModels
             _timeStamp = DateTime.Now;
             _notes = string.Empty;
             _center = ConfigReader.GetCenterDetailsConfigs()[0];
-            _courseFee =(double) _course.Fee;
+            _courseFee = (double)_course.Fee;
         }
-       
+
         public ObservableCollection<CourseDetails> CoursesList { get; set; }
         public ObservableCollection<CenterDetails> CenterList { get; set; }
         public ObservableCollection<PayMode> ModeList { get; set; }
@@ -262,23 +286,42 @@ namespace HandwritingInstituteBillingSystem.ViewModels
             return true;
         }
 
+        private bool CanExecuteInstallment(object param)
+        {
+            if (StartValidation == false)
+            {
+                return true;
+            }
+
+            if (_amountPaid.CompareTo(0) == 0)
+            {
+                MessageBox.Show("Amount paid is zero.");
+
+                return false;
+            }
+
+            return true;
+        }
+
         private void NewEntryFormClicked(object obj)
         {
             var newEntryViewModel = obj as NewEntryViewModel;
             NewFormViewHandler.OnNewEntry(newEntryViewModel);
-            PrintHelper.PrintDoc(newEntryViewModel);
+            PrintForm();
             NewFormViewHandler.CloseForm();
         }
 
 
         private ICommand _printdoc;
+        private bool _printPos = true;
+
         public ICommand PrintCommand
         {
             get
             {
                 if (_printdoc == null)
                 {
-                    _printdoc = new RelayCommand(PrintDoc,null);
+                    _printdoc = new RelayCommand(PrintDoc, null);
 
                 }
                 return _printdoc;
@@ -287,8 +330,94 @@ namespace HandwritingInstituteBillingSystem.ViewModels
 
         private void PrintDoc(object obj)
         {
-            PrintHelper.PrintDoc(this);
+            PrintForm();
             ViewPrintViewHandler.CloseForm();
+        }
+
+        private void PrintForm()
+        {
+            if (PrintA4)
+            {
+                PrintHelper.PrintDocAsDocx(this);
+            }
+            else
+            {
+                PrintHelper.PrintDocAsPoc(this);
+            }
+        }
+
+        public bool PrintPos
+        {
+            get { return _printPos; }
+            set
+            {
+                _printPos = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool PrintA4
+        {
+            get { return !_printPos; }
+            set
+            {
+                _printPos = !value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private ICommand _nextInstallment;
+        public ICommand NextInstallment
+        {
+            get
+            {
+                if (_nextInstallment == null)
+                {
+                    _nextInstallment = new RelayCommand(OnNextInstallment, CanExecuteInstallment);
+
+                }
+                return _nextInstallment;
+            }
+        }
+
+        public long UserUniqueId
+        {
+            get { return _userUniqueId; }
+            set { _userUniqueId = value; }
+        }
+
+        private void OnNextInstallment(object obj)
+        {
+            var newEntryViewModel = obj as NewEntryViewModel;
+            InstallmentHandler.OnInstallmentPayment(newEntryViewModel);
+            PrintForm();
+            InstallmentHandler.CloseForm();
+        }
+
+        public void Set(NewEntryViewModel value)
+        {
+            Name = value.Name;
+            Phone = value.Phone;
+            TotalAmountPaid = value.TotalAmountPaid;
+            Notes = value.Notes;
+            Course = value.Course;
+            CourseFee = value.CourseFee;
+            Center = value.Center;
+            UserUniqueId = value.UserUniqueId;
+        }
+
+        public void SetForPrint(NewEntryViewModel value)
+        {
+            Name = value.Name;
+            Phone = value.Phone;
+            //TotalAmountPaid = value.TotalAmountPaid;
+            TotalAmountPaidForView = value.TotalAmountPaidForView;
+            AmountPaid = value.AmountPaid;
+            Notes = value.Notes;
+            Course = value.Course;
+            CourseFee = value.CourseFee;
+            Center = value.Center;
+            UserUniqueId = value.UserUniqueId;
         }
     }
 }

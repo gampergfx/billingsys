@@ -8,7 +8,7 @@
     xmlns:ViewModels="clr-namespace:HandwritingInstituteBillingSystem.ViewModels"
     x:Class="HandwritingInstituteBillingSystem.Views.PeopleUserControl"
              mc:Ignorable="d" 
-             d:DesignHeight="191.367" d:DesignWidth="600" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+             d:DesignHeight="191.367" d:DesignWidth="700" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
     <Border BorderThickness="2" Opacity="0.7" BorderBrush="LightGray">
         <Grid Name="Grid1" Margin="5,5,0,0" >
             <Grid.RowDefinitions>
@@ -28,7 +28,8 @@
             <Button  Width="70" Height="30" Margin="5" Grid.Column="0" Grid.Row="0" Content="New Entry" Click="Button_Click"/>
             <Button  Width="70" Height="30" Margin="5" Grid.Column="1" Grid.Row="0" Content="View/Print" Click="View_Click" />
             <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="0">
-            <Button  Width="70" Height="30" Margin="5" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" Content="Delete" Command="{Binding DeleteCommand}" />
+            <Button  Width="70" Height="30" Margin="5" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" Content="Trash" Command="{Binding DeleteCommand}" />
+            <Button  Width="120" Height="30" Margin="5" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" Content="Next Installment" Command="{Binding NextInstallment}" />
                 <Button  Width="70" Height="30" Margin="5" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" Content="Export"  Command="{Binding ExportData}" />
                 <TextBlock Margin="5" VerticalAlignment="Center" Text="Count:"></TextBlock>
                 <TextBlock Margin="5" VerticalAlignment="Center" Text="{Binding UserDetailViewModels.Count}"></TextBlock>
@@ -44,6 +45,7 @@
                     <DataGridTextColumn Header="Course Fee" Binding="{Binding CourseFee}" />
                     <DataGridTextColumn Header="Balance" Binding="{Binding Balance}" />
                     <DataGridTextColumn Header="Amount Paid" Binding="{Binding AmountPaid}" />
+                    <!--<DataGridTextColumn Header="Total Amount Paid Till Date" Binding="{Binding TotalAmountPaid}" />-->
                     <DataGridTextColumn Header="BillNo" Binding="{Binding BillNo}" />
                     <DataGridTextColumn Header="ModeOfPayment" Binding="{Binding ModeOfPayment}" />
                     <DataGridTextColumn Header="Cashier" Binding="{Binding Cashier}" />

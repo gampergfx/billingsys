@@ -49,7 +49,7 @@ namespace HandwritingInstituteBillingSystem {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("John")]
+        [global::System.Configuration.DefaultSettingValueAttribute("HIIPL")]
         public string CasherName {
             get {
                 return ((string)(this["CasherName"]));

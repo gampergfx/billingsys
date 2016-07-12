@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using HandwritingInstituteBillingSystem.Logic;
 using HandwritingInstituteBillingSystem.ViewModels;
 
@@ -45,6 +42,46 @@ namespace HandwritingInstituteBillingSystem.CommonViewHandlers
         public static void ItemsListChanged(List<UserDetails> toList)
         {
             OnItemsListChanged?.Invoke(toList, EventArgs.Empty);
+        }
+    }
+
+    static class InstallmentHandler 
+    {
+        public static event EventHandler<long> ShowInstallmentPaymentForm;
+        public static event EventHandler<NewEntryViewModel> InstallmentPayment;
+
+        public static void OnShowInstallmentPaymentForm(long e)
+        {
+           ShowInstallmentPaymentForm?.Invoke(null, e);
+        }
+
+        public static void OnInstallmentPayment(NewEntryViewModel e)
+        {
+            InstallmentPayment?.Invoke(null, e);
+        }
+
+        public static event EventHandler OnCloseForm;
+
+        public static void CloseForm()
+        {
+            OnCloseForm?.Invoke(null, EventArgs.Empty);
+        }
+    }
+
+    static class TrashHandler   
+    {
+        public static event EventHandler MoveToTrash;
+        public static event EventHandler RestoreTrash;
+
+
+        public static void OnMoveToTrash(UserDetails selectedUserDetails)
+        {
+            MoveToTrash?.Invoke(selectedUserDetails, EventArgs.Empty);
+        }
+
+        public static void OnRestoreTrash(UserDetails selectedUserDetails)
+        {
+            RestoreTrash?.Invoke(selectedUserDetails, EventArgs.Empty);
         }
     }
 }

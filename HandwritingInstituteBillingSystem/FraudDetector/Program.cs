@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FraudDetector
 {
@@ -11,7 +7,7 @@ namespace FraudDetector
     {
         static void Main(string[] args)
         {
-            var canWorTill = DateTimeOffset.Now.AddMonths(1);
+            var canWorTill = DateTimeOffset.Now.AddYears(1);
             var encoded = Base64Encode(canWorTill.ToString("O"));
 
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "metadat.ccc");

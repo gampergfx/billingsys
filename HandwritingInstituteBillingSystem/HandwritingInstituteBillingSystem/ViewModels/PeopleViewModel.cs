@@ -4,8 +4,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
-using System.Security.Permissions;
 using System.Text;
 using System.Windows;
 using System.Windows.Forms;
@@ -19,7 +17,7 @@ namespace HandwritingInstituteBillingSystem.ViewModels
     class PeopleViewModel: INotifyPropertyChanged
     {
         private ObservableCollection<UserDetails> _userDetailViewModels;
-        private readonly PeopleManager _peopleManager = new PeopleManager();
+        private readonly PeopleManager _peopleManager = Store.Get();
         private UserDetails _selectedUserDetails;
         private NewEntryViewModel _newEntryViewModel;
 
@@ -28,6 +26,16 @@ namespace HandwritingInstituteBillingSystem.ViewModels
             UserDetailViewModels = new ObservableCollection<UserDetails>(_peopleManager.GetFromStorage());
             NewFormViewHandler.NewEntry -= OnNewEntry;
             NewFormViewHandler.NewEntry += OnNewEntry;
+            TrashHandler.RestoreTrash += OnRestore;
+            InstallmentHandler.InstallmentPayment += OnInstallmentPaid;
+        }
+
+
+        private void OnRestore(object sender, EventArgs e)
+        {
+            UserDetailViewModels.Add(sender as UserDetails);
+            RaisePropertyChanged(nameof(UserDetailViewModels));
+            ReportHandler.ItemsListChanged(UserDetailViewModels.ToList());
         }
 
         private void OnNewEntry(object sender, NewEntryViewModel e)
@@ -39,14 +47,30 @@ namespace HandwritingInstituteBillingSystem.ViewModels
             ReportHandler.ItemsListChanged(UserDetailViewModels.ToList());
         }
 
+
+        private void OnInstallmentPaid(object sender, NewEntryViewModel e)
+        {
+            var userDetails = GetUserDetails(e);
+            if (e.UserUniqueId > 0)
+            {
+                userDetails.UserUniqueId = e.UserUniqueId;
+            }
+            _peopleManager.Store(userDetails);
+            UserDetailViewModels.Add(userDetails);
+            RaisePropertyChanged(nameof(UserDetailViewModels));
+            ReportHandler.ItemsListChanged(UserDetailViewModels.ToList());
+        }
+
         private static UserDetails GetUserDetails(NewEntryViewModel newEntryViewModel)
         {
-            return new UserDetails()
+            return new UserDetails
             {
                 Id =  Guid.NewGuid(),
+                UserUniqueId = DateTimeOffset.Now.Ticks,
                 Name = newEntryViewModel.Name,
                 Phone = newEntryViewModel.Phone,
                 AmountPaid = newEntryViewModel.AmountPaid,
+                TotalAmountPaid = newEntryViewModel.TotalAmountPaid,
                 Balance = double.Parse(newEntryViewModel.Balance),
                 Course = newEntryViewModel.Course.CourseName,
                 Center = newEntryViewModel.Center.CenterName,
@@ -81,6 +105,7 @@ namespace HandwritingInstituteBillingSystem.ViewModels
             {
                 _filterText = value;
                 RaisePropertyChanged(nameof(UserDetailViewModelsFilter));
+                RaisePropertyChanged(nameof(FilterText));
             }
             get { return _filterText; }
         }
@@ -137,6 +162,39 @@ namespace HandwritingInstituteBillingSystem.ViewModels
         }
 
         private ICommand _deleteCommand;
+        private ICommand _nextInstallment;
+        public ICommand NextInstallment
+        {
+            get
+            {
+                if (_nextInstallment == null)
+                {
+                    _nextInstallment = new RelayCommand(OnNextInstallment, null);
+
+                }
+                return _nextInstallment;
+            }
+        }
+
+        private void OnNextInstallment(object obj)
+        {
+
+            if (_selectedUserDetails == null)
+            {
+                MessageBox.Show("No item selected", "Pay Installment");
+                return;
+            }
+
+            var newEntryViewModel = _peopleManager.GetLatest(_selectedUserDetails.UserUniqueId);
+            var balance = newEntryViewModel.CourseFee -  newEntryViewModel.TotalAmountPaidForView;
+            if (balance <= 0)
+            {
+                MessageBox.Show("No installment left to be paid", "Pay Installment");
+                return;
+            }
+
+            InstallmentHandler.OnShowInstallmentPaymentForm(SelectedUserDetails.UserUniqueId);
+        }
 
         public ICommand DeleteCommand
         {
@@ -156,12 +214,21 @@ namespace HandwritingInstituteBillingSystem.ViewModels
         {
             if (_selectedUserDetails == null)
             {
-                MessageBox.Show("No item selected for delete", "Delete record");
+                MessageBox.Show("No item selected", "Move to Trash");
                 return;
             }
-            _peopleManager.Delete(SelectedUserDetails.Id);
+
+            MessageBox.Show("Selected item will be moved to trash", "Move to Trash");
+
+            _peopleManager.DeletePayment(SelectedUserDetails.Id);
+            _peopleManager.Trash(SelectedUserDetails);
+
+            TrashHandler.OnMoveToTrash(SelectedUserDetails);
+
+
             _userDetailViewModels.Remove(SelectedUserDetails);
             RaisePropertyChanged(nameof(UserDetailViewModels));
+
             ReportHandler.ItemsListChanged(UserDetailViewModels.ToList());
         }
 
@@ -223,10 +290,10 @@ namespace HandwritingInstituteBillingSystem.ViewModels
             }
 
             var csvString = new StringBuilder();
-            csvString.Append("TimeStamp,Name,Phone,Course,Center,CourseFee,Balance,AmountPaid,BillNo,ModeOfPayment,Cashier,Notes\n");
+            csvString.Append("TimeStamp,Name,Phone,Course,Center,CourseFee,Balance,AmountPaid,BillNo,TotalAmountPaidTillDate,ModeOfPayment,Cashier,Notes\n");
             foreach (var userDetails in UserDetailViewModelsFilter)
             {
-                csvString.Append($"{userDetails.TimeStamp.ToString("dd-MM-yy hh:mm tt")},{userDetails.Name},{userDetails.Phone},{userDetails.Course},{userDetails.Center},{userDetails.CourseFee},{userDetails.Balance},{userDetails.AmountPaid},{userDetails.BillNo},{userDetails.ModeOfPayment},{userDetails.Cashier},{userDetails.Notes}\n");
+                csvString.Append($"{userDetails.TimeStamp.ToString("dd-MM-yy hh:mm tt")},{userDetails.Name},{userDetails.Phone},{userDetails.Course},{userDetails.Center},{userDetails.CourseFee},{userDetails.Balance},{userDetails.AmountPaid},{userDetails.BillNo},{userDetails.TotalAmountPaid},{userDetails.ModeOfPayment},{userDetails.Cashier},{userDetails.Notes}\n");
             }
 
             File.WriteAllText(filePath,csvString.ToString());

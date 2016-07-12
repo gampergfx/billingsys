@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.IO;
 using System.Windows;
 using System.Windows.Forms;
 using HandwritingInstituteBillingSystem.ViewModels;
+using Microsoft.Office.Interop.Word;
+using Novacode;
+using Application = Microsoft.Office.Interop.Word.Application;
 using Image = System.Drawing.Image;
 using MessageBox = System.Windows.MessageBox;
 using PrintDialog = System.Windows.Forms.PrintDialog;
+using Font = System.Drawing.Font;
+using Rectangle = System.Drawing.Rectangle;
 
 namespace HandwritingInstituteBillingSystem.Printing
 {
@@ -28,12 +34,12 @@ namespace HandwritingInstituteBillingSystem.Printing
             _reverseTax = 1 + (_tax/100);
         }
 
-        public static void PrintDoc(NewEntryViewModel newEntryViewModel)
+        public static void PrintDocAsPoc(NewEntryViewModel newEntryViewModel)
         {
             _newEntryViewModel = newEntryViewModel;
             PrintDocument doc = new PrintDocument();
             doc.DefaultPageSettings.PaperSize = new PaperSize("Receipt",300,700);
-            PrintPreview(doc);
+           PrintPreview(doc);
             doc.PrintPage += Print;
             PrintDialog pdi = new PrintDialog {Document = doc,PrinterSettings = new PrinterSettings() };
             if (pdi.ShowDialog() == DialogResult.OK)
@@ -45,16 +51,16 @@ namespace HandwritingInstituteBillingSystem.Printing
             }
             else
             {
-                MessageBox.Show("Print Cancelled");
+                MessageBox.Show("Print Canceled");
             }
         }
 
         private static void PrintPreview(PrintDocument doc)
         {
-            if (AppSettings.Default.ShowPrintPreview == false)
-            {
-                return;
-            }
+            //if (AppSettings.Default.ShowPrintPreview == false)
+            //{
+            //    return;
+            //}
             PrintPreviewDialog dlg = new PrintPreviewDialog();
             dlg.Document = doc;
             doc.PrintPage += Print;
@@ -92,6 +98,7 @@ namespace HandwritingInstituteBillingSystem.Printing
                 GetValue(e, "        Handwriting Institute India Pvt. Ltd", font8);
                 GetValue(e, "         16, Church Road, Basavanagudi", font8);
                 GetValue(e, "         Bengaluru, Karnataka, IN 560004", font8);
+                GetValue(e, "         Tel: 080-41312038, 9845500732", font8);
 
              
                 GetValue(e, "\n", font6 + font6);
@@ -135,8 +142,8 @@ namespace HandwritingInstituteBillingSystem.Printing
                 GetValue(e, "www.handwritingindia.com", font6);
 
                 GetValue(e, "\n", 20);
-                GetValue(e, "                  --------------------------------------", font6);
-                GetValue(e, "                                Signature", font6);
+               // GetValue(e, "                  --------------------------------------", font6);
+               // GetValue(e, "                                Signature", font6);
                 GetValue(e, "\n", 4);
                 GetValue(e, "                            "+ copyName, font6);
             }
@@ -159,6 +166,77 @@ namespace HandwritingInstituteBillingSystem.Printing
         private static string   GetHeaderToPrint(string input)
         {
             return $"---{input}---";
+        }
+   
+        public static void PrintDocAsDocx(NewEntryViewModel newEntryViewModel)
+        {
+            var appPath = AppDomain.CurrentDomain.BaseDirectory;
+            var fileNameFull = Path.Combine(appPath, "printTemplate.docx");
+            _newEntryViewModel = newEntryViewModel;
+
+            var doc = DocX.Load(fileNameFull);
+            doc.ReplaceText("{name}",newEntryViewModel.Name);
+            doc.ReplaceText("{phone}",newEntryViewModel.Phone);
+            doc.ReplaceText("{billno}",newEntryViewModel.BillNo);
+            doc.ReplaceText("{timestamp}",newEntryViewModel.TimeStamp.ToString("dd-MM-yy hh:mm tt"));
+            doc.ReplaceText("{balance}",newEntryViewModel.Balance);
+            doc.ReplaceText("{course}",newEntryViewModel.Course.CourseName);
+            doc.ReplaceText("{coursefee}", "₹ " + newEntryViewModel.Course.Fee.ToString("##.###"));
+            doc.ReplaceText("{centername}",newEntryViewModel.Center.CenterName);
+
+            var courseAmount = _newEntryViewModel.AmountPaid / _reverseTax;
+            doc.ReplaceText("{towardscouse}", "₹ " + courseAmount.ToString("##.###"));
+            doc.ReplaceText("{towardstax}", "₹ " + (courseAmount * (_tax / 100)).ToString("##.###"));
+            doc.ReplaceText("{totalamount}", "₹ " + _newEntryViewModel.AmountPaid.ToString("##.###"));
+            doc.ReplaceText("{taxpc}", _tax.ToString("##.###")+"%");
+            var filenamenew = fileNameFull.Replace("printTemplate", DateTime.Now.Ticks.ToString());
+            doc.SaveAs(filenamenew);
+
+            Application wordApp = new Application();
+
+            var doc2 = GetMsDocument(filenamenew, wordApp);
+
+            PrintDialog pdi = new PrintDialog { PrinterSettings = new PrinterSettings() };
+
+            pdi.ShowDialog();
+
+            doc2.Application.ActivePrinter = pdi.PrinterSettings.PrinterName;
+            try
+            {
+                doc2.Application.PrintOut();
+            }
+            catch (Exception)
+            {
+                return;
+            }
+            wordApp = null;
+        }
+
+        private static Document GetMsDocument(string filenamenew, Application wordApp)
+        {
+            object fileName = filenamenew;
+            object confirmConversions = Type.Missing;
+            object readOnly = true;
+            object addToRecentFiles = Type.Missing;
+            object passwordDoc = Type.Missing;
+            object passwordTemplate = Type.Missing;
+            object revert = Type.Missing;
+            object writepwdoc = Type.Missing;
+            object writepwTemplate = Type.Missing;
+            object format = Type.Missing;
+            object encoding = Type.Missing;
+            object visible = Type.Missing;
+            object openRepair = Type.Missing;
+            object docDirection = Type.Missing;
+            object notEncoding = Type.Missing;
+            object xmlTransform = Type.Missing;
+
+            Document doc2 = wordApp.Documents.Open(
+                ref fileName, ref confirmConversions, ref readOnly, ref addToRecentFiles,
+                ref passwordDoc, ref passwordTemplate, ref revert, ref writepwdoc,
+                ref writepwTemplate, ref format, ref encoding, ref visible, ref openRepair,
+                ref docDirection, ref notEncoding, ref xmlTransform);
+            return doc2;
         }
     }
 }

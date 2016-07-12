@@ -2,17 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Dynamic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows;
 using System.Windows.Input;
 using HandwritingInstituteBillingSystem.Annotations;
 using HandwritingInstituteBillingSystem.CommonViewHandlers;
 using HandwritingInstituteBillingSystem.Logic;
 using HandwritingInstituteBillingSystem.Logic.Configs;
 using System.Text;
-using System.Windows;
 using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
 using System.IO;

@@ -3,11 +3,11 @@
 namespace HandwritingInstituteBillingSystem.Views
 {
     /// <summary>
-    /// Interaction logic for Report.xaml
+    /// Interaction logic for TrashUserControl.xaml
     /// </summary>
-    public partial class Report : UserControl
+    public partial class TrashUserControl : UserControl
     {
-        public Report()
+        public TrashUserControl()
         {
             InitializeComponent();
         }

@@ -1,8 +1,9 @@
-﻿using System.Windows.Controls;
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
+using HandwritingInstituteBillingSystem.CommonViewHandlers;
 using HandwritingInstituteBillingSystem.Logic;
 using HandwritingInstituteBillingSystem.ViewModels;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
 
 namespace HandwritingInstituteBillingSystem.Views
 {
@@ -14,6 +15,15 @@ namespace HandwritingInstituteBillingSystem.Views
         public PeopleUserControl()
         {
             InitializeComponent();
+            this.Loaded += OnLoadedFully;
+            InstallmentHandler.ShowInstallmentPaymentForm += OnShowInstallment;
+        }
+
+        private void OnLoadedFully(object sender, RoutedEventArgs e)
+        {
+            var peopleViewModel = (Grid1.DataContext as PeopleViewModel);
+            peopleViewModel.FilterText = string.Empty;
+            searchBox.Text = string.Empty;
         }
 
         private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -43,6 +53,16 @@ namespace HandwritingInstituteBillingSystem.Views
             }
 
             peopleViewModel.FilterText = searchBox.Text;
+        }
+
+        private void OnShowInstallment(object sender, long e)
+        {
+            var value = Store.Get().GetLatest(e);
+            value.AmountPaid = 0;
+            BillNoGenerator.IncrementBillSequence();
+            value.BillNo = BillNoGenerator.Get();
+            var partPayment = new PartPayment(value);
+            partPayment.ShowDialog();
         }
     }
 }

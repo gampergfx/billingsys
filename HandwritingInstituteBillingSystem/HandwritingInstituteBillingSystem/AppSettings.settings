@@ -9,7 +9,7 @@
       <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="CasherName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">John</Value>
+      <Value Profile="(Default)">HIIPL</Value>
     </Setting>
     <Setting Name="MinBillAmount" Type="System.Double" Scope="User">
       <Value Profile="(Default)">100</Value>

@@ -5,6 +5,7 @@ namespace HandwritingInstituteBillingSystem.ViewModels
     class UserDetails
     {
         public Guid Id { get; set; }
+        public long UserUniqueId { get; set; }
         public DateTime TimeStamp { get; set; }
         public string Name { get; set; }
         public string Phone { get; set; }
@@ -13,6 +14,8 @@ namespace HandwritingInstituteBillingSystem.ViewModels
 
         public double AmountPaid { get; set; }
 
+        public double TotalAmountPaid { get; set; }
+        
         public string Cashier { get; set; }
 
         public string BillNo { get; set; }

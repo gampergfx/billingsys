@@ -1,7 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using HandwritingInstituteBillingSystem.CommonViewHandlers;
 using HandwritingInstituteBillingSystem.ViewModels;
 using MahApps.Metro.Controls;
@@ -9,15 +18,24 @@ using MahApps.Metro.Controls;
 namespace HandwritingInstituteBillingSystem.Views
 {
     /// <summary>
-    /// Interaction logic for NewForm.xaml
+    /// Interaction logic for PartPayment.xaml
     /// </summary>
-    public partial class NewForm : MetroWindow
+    public partial class PartPayment : MetroWindow
     {
-        public NewForm()
+        private NewEntryViewModel value;
+
+        public PartPayment(NewEntryViewModel value)
         {
             InitializeComponent();
-            NewFormViewHandler.OnCloseForm += OnCloseWindow;
             this.Loaded += OnLoaded;
+            var newEntryViewModel = Grid1.DataContext as NewEntryViewModel;
+            newEntryViewModel.Set(value);
+            InstallmentHandler.OnCloseForm += OnClose;
+        }
+
+        private void OnClose(object sender, EventArgs e)
+        {
+            Close();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -25,24 +43,6 @@ namespace HandwritingInstituteBillingSystem.Views
             var newEntryViewModel = Grid1.DataContext as NewEntryViewModel;
             if (newEntryViewModel != null)
                 newEntryViewModel.StartValidation = true;
-        }
-
-
-        private void OnCloseWindow(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void NumericOnly(object sender, TextCompositionEventArgs e)
-        {
-            e.Handled = IsTextNumeric(e.Text);
-        }
-
-        private static bool IsTextNumeric(string str)
-        {
-            System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex("[^0-9]");
-            return reg.IsMatch(str);
-
         }
 
         private void TextBox_LostFocus(object sender, RoutedEventArgs e)

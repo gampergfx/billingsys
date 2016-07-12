@@ -17,7 +17,7 @@ namespace HandwritingInstituteBillingSystem.Views
             InitializeComponent();
             this.LogoImage.Source =  new BitmapImage(new Uri(@"LOGO1.png", UriKind.Relative));
             MainWindowMessabeBoxHandler.ShowErrorMessageEvent += ShowErrorMessage;
-            Check();
+           // Check(); to check for license
         }
 
         private void Check()
