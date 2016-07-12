@@ -1,0 +1,82 @@
+﻿<controls:MetroWindow
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HandwritingInstituteBillingSystem.Views"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:ViewModels="clr-namespace:HandwritingInstituteBillingSystem.ViewModels" 
+        x:Class="HandwritingInstituteBillingSystem.Views.NewForm"
+        mc:Ignorable="d" 
+                      GlowBrush="{DynamicResource AccentColorBrush}"
+                      WindowStartupLocation="CenterScreen" 
+                      ResizeMode ="NoResize"
+                      BorderThickness="0" 
+        Title="New Entry Form" Height="600" Width="350" Icon="LOGO1.png">
+    <Grid Name="Grid1" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="120"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.DataContext>
+            <ViewModels:NewEntryViewModel/>
+        </Grid.DataContext>
+        <Label x:Name="label1"  Content="Name *" Grid.Column="1" Margin="2" Grid.Row="1" HorizontalAlignment="Right" HorizontalContentAlignment="Right" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <Label x:Name="label2" Content="Phone *" Grid.Column="1" Margin="2" Grid.Row="2" HorizontalAlignment="Right" HorizontalContentAlignment="Right" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <Label x:Name="label3" Content="Center" Grid.Column="1" Margin="2" Grid.Row="3" HorizontalAlignment="Right" HorizontalContentAlignment="Right" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <Label x:Name="label4" Content="Course" Grid.Column="1" Margin="2" Grid.Row="4" HorizontalAlignment="Right" HorizontalContentAlignment="Right" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <Label x:Name="label5" Content="Course Fee" Grid.Column="1" Margin="2" Grid.Row="5" HorizontalAlignment="Right" HorizontalContentAlignment="Right" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <Label x:Name="label6" Content="Amount Paid *" Grid.Column="1" Margin="2" Grid.Row="6" HorizontalAlignment="Right" HorizontalContentAlignment="Right" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <Label x:Name="label7" Content="Balance" Grid.Column="1" Margin="2" Grid.Row="7" HorizontalAlignment="Right" HorizontalContentAlignment="Right" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <Label x:Name="label8" Content="Mode of Payment" Grid.Column="1" Margin="2" Grid.Row="8" HorizontalAlignment="Right" HorizontalContentAlignment="Right" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <Label x:Name="label12" Content="Bill No" Grid.Column="1" Margin="2" Grid.Row="9" HorizontalAlignment="Right" HorizontalContentAlignment="Right" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <Label x:Name="label9" Content="TimeStamp" Grid.Column="1" Margin="2" Grid.Row="10" HorizontalAlignment="Right" HorizontalContentAlignment="Right" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <Label x:Name="label13" Content="Notes" Grid.Column="1" Margin="2" Grid.Row="11" HorizontalAlignment="Right" HorizontalContentAlignment="Right" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+        <StackPanel Width="Auto" Orientation="Horizontal" HorizontalAlignment="Left" Grid.Row="13" Grid.Column="2">
+            <RadioButton GroupName="x" IsChecked="{Binding PrintPos}" >Print POS </RadioButton>
+            <RadioButton GroupName="x" IsChecked="{Binding PrintA4}">Print A4</RadioButton>
+        </StackPanel>
+        <StackPanel Width="Auto" Grid.Row="14" Grid.Column="1" HorizontalAlignment="Right" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0" VerticalAlignment="Top" >
+            <Button Width="80"  Height="25" Margin="5,0" IsCancel="True" Content="Cancel" />
+            <Button Width="95" Height="25" Margin="5,0,10,0" Content="Save and Print" Command="{Binding NewEntryCommand, Mode=OneWay , ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding}" IsDefault="True"    />
+        </StackPanel>
+
+        <TextBox x:Name="Name" Grid.Column="2" Margin="2,0,2,2" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center" controls:TextBoxHelper.Watermark="Full Name" Height="26" Width="200" Text="{Binding Name}" />
+        <TextBox x:Name="Phone" Grid.Column="2" Margin="2,2,5,2" Grid.Row="2" VerticalAlignment="Center" VerticalContentAlignment="Center" controls:TextBoxHelper.Watermark="10 digit mobile number" PreviewTextInput="NumericOnly" Height="26" HorizontalAlignment="Left" Width="200" Text="{Binding Phone}" />
+        <ComboBox x:Name="Center" Grid.Column="2" Margin="2,2,5,2" Grid.Row="3" VerticalAlignment="Center" VerticalContentAlignment="Center" Height="26" HorizontalAlignment="Left" Width="200" ItemsSource="{Binding CenterList}" SelectedItem="{Binding Center}" IsSynchronizedWithCurrentItem="True" />
+        <ComboBox x:Name="Course" Grid.Column="2" Margin="2,2,5,2" Grid.Row="4" VerticalAlignment="Center" VerticalContentAlignment="Center" Height="26" HorizontalAlignment="Left" Width="200" ItemsSource="{Binding CoursesList}" SelectedItem="{Binding Course}" IsSynchronizedWithCurrentItem="True"/>
+        <TextBox x:Name="CourseFee" Grid.Column="2" Margin="2,2,2,2" Grid.Row="5" HorizontalAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True"  Height="26" Width="200" Text="{Binding Course.Fee}" />
+        <TextBox Grid.Column="2" Margin="2,2,2,2" Grid.Row="6" HorizontalAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center" controls:TextBoxHelper.Watermark="Decimal only" Height="26" Width="200" Text="{Binding AmountPaidString,Mode=OneWayToSource}" LostFocus="TextBox_LostFocus" />
+        <TextBox x:Name="Balance" Grid.Column="2" Margin="2,2,2,2" Grid.Row="7" HorizontalAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Height="26" Width="200" Text="{Binding Balance}" />
+        <ComboBox x:Name="ModeOfPmt" Grid.Column="2" Margin="2,2,5,2" Grid.Row="8" VerticalAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Left" Width="200" ItemsSource="{Binding ModeList}" SelectedItem="{Binding ModeOfPayment}" IsSynchronizedWithCurrentItem="True"/>
+        <TextBox x:Name="BillNo" Grid.Column="2" Margin="2,2,2,2" Grid.Row="9" HorizontalAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Height="26" Width="200" Text="{Binding BillNo}" />
+        <TextBox x:Name="TimeStamp" Grid.Column="2" Margin="2,2,2,2" Grid.Row="10" HorizontalAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" Height="26" Width="200" Text="{Binding TimeStamp}" />
+        <RichTextBox   Height="55" x:Name="Notes" Grid.Column="2" Margin="2,2,2,2" Grid.Row="11" Grid.RowSpan="2" HorizontalAlignment="Left" VerticalAlignment="Center" VerticalContentAlignment="Center" Width="200" controls:TextBoxHelper.UseFloatingWatermark="True" >
+            <FlowDocument>
+                <Paragraph>
+                    <Run Name="NoteContent" Text="{Binding Notes}"/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+    </Grid>
+</controls:MetroWindow>
+

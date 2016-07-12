@@ -1,0 +1,57 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:local="clr-namespace:HandwritingInstituteBillingSystem"
+    xmlns:ViewModels="clr-namespace:HandwritingInstituteBillingSystem.ViewModels"
+    x:Class="HandwritingInstituteBillingSystem.Views.PeopleUserControl"
+             mc:Ignorable="d" 
+             d:DesignHeight="191.367" d:DesignWidth="700" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Border BorderThickness="2" Opacity="0.7" BorderBrush="LightGray">
+        <Grid Name="Grid1" Margin="5,5,0,0" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.DataContext>
+                <ViewModels:PeopleViewModel/>
+            </Grid.DataContext>
+            <Button  Width="70" Height="30" Margin="5" Grid.Column="0" Grid.Row="0" Content="New Entry" Click="Button_Click"/>
+            <Button  Width="70" Height="30" Margin="5" Grid.Column="1" Grid.Row="0" Content="View/Print" Click="View_Click" />
+            <StackPanel Orientation="Horizontal" Grid.Column="2" Grid.Row="0">
+            <Button  Width="70" Height="30" Margin="5" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" Content="Trash" Command="{Binding DeleteCommand}" />
+            <Button  Width="120" Height="30" Margin="5" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" Content="Next Installment" Command="{Binding NextInstallment}" />
+                <Button  Width="70" Height="30" Margin="5" VerticalAlignment="Center" VerticalContentAlignment="Center" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" Content="Export"  Command="{Binding ExportData}" />
+                <TextBlock Margin="5" VerticalAlignment="Center" Text="Count:"></TextBlock>
+                <TextBlock Margin="5" VerticalAlignment="Center" Text="{Binding UserDetailViewModels.Count}"></TextBlock>
+            </StackPanel>
+            <TextBox Name="searchBox" controls:TextBoxHelper.Watermark="Search by Name"  controls:TextBoxHelper.ClearTextButton="True" Width="160" Height="25"  Margin="0,5,10,5" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Right" KeyUp="TextBox_KeyUp"   />
+            <DataGrid x:Name="PeopleGrid" SelectionMode="Single" Grid.Row="1" Grid.ColumnSpan="4" Grid.RowSpan="2" IsReadOnly="True" AutoGenerateColumns="False" ItemsSource="{Binding UserDetailViewModelsFilter}" SelectedValue="{Binding Path=SelectedUserDetails}" GridLinesVisibility="Horizontal">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Time Stamp" Binding="{Binding TimeStamp}" />
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                    <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" />
+                    <DataGridTextColumn Header="Course" Binding="{Binding Course}" />
+                    <DataGridTextColumn Header="Center" Binding="{Binding Center}" />
+                    <DataGridTextColumn Header="Course Fee" Binding="{Binding CourseFee}" />
+                    <DataGridTextColumn Header="Balance" Binding="{Binding Balance}" />
+                    <DataGridTextColumn Header="Amount Paid" Binding="{Binding AmountPaid}" />
+                    <!--<DataGridTextColumn Header="Total Amount Paid Till Date" Binding="{Binding TotalAmountPaid}" />-->
+                    <DataGridTextColumn Header="BillNo" Binding="{Binding BillNo}" />
+                    <DataGridTextColumn Header="ModeOfPayment" Binding="{Binding ModeOfPayment}" />
+                    <DataGridTextColumn Header="Cashier" Binding="{Binding Cashier}" />
+                    <DataGridTextColumn Header="Notes" Binding="{Binding Notes}" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+    </Border>
+</UserControl>
