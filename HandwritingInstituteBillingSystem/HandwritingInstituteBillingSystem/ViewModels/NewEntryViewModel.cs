@@ -336,7 +336,7 @@ namespace HandwritingInstituteBillingSystem.ViewModels
 
         private void PrintForm()
         {
-            if (PrintA4)
+            if (_printPos == false)
             {
                 PrintHelper.PrintDocAsDocx(this);
             }

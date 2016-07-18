@@ -39,7 +39,7 @@ namespace HandwritingInstituteBillingSystem.Printing
             _newEntryViewModel = newEntryViewModel;
             PrintDocument doc = new PrintDocument();
             doc.DefaultPageSettings.PaperSize = new PaperSize("Receipt",300,700);
-           PrintPreview(doc);
+          // PrintPreview(doc);
             doc.PrintPage += Print;
             PrintDialog pdi = new PrintDialog {Document = doc,PrinterSettings = new PrinterSettings() };
             if (pdi.ShowDialog() == DialogResult.OK)
@@ -85,7 +85,7 @@ namespace HandwritingInstituteBillingSystem.Printing
                 _yPos = 5;
                 Image img = Image.FromFile("LOGO1.png");
                 
-                Rectangle logo = new Rectangle(120,26,50,50);
+                Rectangle logo = new Rectangle(110,28,80,50);
 
                 const int fontEighteen = 12;
                 GetValue(e, paymentReceipt, fontEighteen);

@@ -15,7 +15,6 @@ namespace HandwritingInstituteBillingSystem.Views
             InitializeComponent();
             var newEntryViewModel = Grid1.DataContext as NewEntryViewModel;
             newEntryViewModel.SetForPrint(data);
-            PrintB.Command = data.PrintCommand;
             ViewPrintViewHandler.OnCloseForm += OnCloseRequest;
         }
 
@@ -23,11 +22,5 @@ namespace HandwritingInstituteBillingSystem.Views
         {
             this.Close();
         }
-    }
-
-    public enum Mode
-    {
-        PartPaymentMode,
-        ViewAndPrint
     }
 }

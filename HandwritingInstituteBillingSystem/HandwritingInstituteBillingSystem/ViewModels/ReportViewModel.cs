@@ -119,7 +119,7 @@ namespace HandwritingInstituteBillingSystem.ViewModels
             {
                 return "";
             }
-            var count = resultList.Length;
+            var count = resultList.GroupBy(x=>x.UserUniqueId).Count();
             return string.Concat(count , "(Rs ", resultList.Sum(x => x.AmountPaid).ToString("###.##"),")");
         }
 
