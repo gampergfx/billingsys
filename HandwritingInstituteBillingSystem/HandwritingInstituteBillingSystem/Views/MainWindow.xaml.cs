@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using HandwritingInstituteBillingSystem.CommonViewHandlers;
 using MahApps.Metro.Controls;
@@ -14,10 +17,32 @@ namespace HandwritingInstituteBillingSystem.Views
     {
         public MainWindow()
         {
+            MainWindowMessabeBoxHandler.ShowErrorMessageEvent += ShowErrorMessage;
+            if (IsAppAlreadyRunning())
+            {
+                MessageBox.Show("The application is already opened.", "Application already running");
+                Environment.Exit(-200);
+            }
             InitializeComponent();
             this.LogoImage.Source =  new BitmapImage(new Uri(@"LOGO1.png", UriKind.Relative));
-            MainWindowMessabeBoxHandler.ShowErrorMessageEvent += ShowErrorMessage;
            // Check(); to check for license
+        }
+
+        private static bool IsAppAlreadyRunning()
+        {
+            try
+            {
+                var processes = Process.GetProcesses();
+                const string comfortpointOpenStudioProcessName = "HandwritingInstituteBillingSystem";
+                return processes.Any(process => process.Id != Process.GetCurrentProcess().Id
+                    && process.ProcessName == comfortpointOpenStudioProcessName);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("The application is already opened.", "Application already running");
+                Environment.Exit(-200);
+            }
+            return false;
         }
 
         private void Check()
@@ -53,7 +78,7 @@ namespace HandwritingInstituteBillingSystem.Views
 
         private void ShowErrorMessage(object sender, MessageData e)
         {
-            this.ShowMessageAsync(e.Title,e.Message);
+            var messageDialogResult = this.ShowMessageAsync(e.Title,e.Message).Result;
         }
     }
 }
