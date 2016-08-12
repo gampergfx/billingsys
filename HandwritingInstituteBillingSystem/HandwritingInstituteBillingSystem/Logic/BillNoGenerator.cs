@@ -23,7 +23,7 @@ namespace HandwritingInstituteBillingSystem.Logic
 
         private static void UpdateCurrentSeqNo(int currentSeqNo)
         {
-            var nextSeqNumber = AppSettings.Default.CurentBillSeqNo+1;
+            var nextSeqNumber = currentSeqNo + 1;
             AppSettings.Default.CurentBillSeqNo = nextSeqNumber;
             AppSettings.Default.Save();
         }

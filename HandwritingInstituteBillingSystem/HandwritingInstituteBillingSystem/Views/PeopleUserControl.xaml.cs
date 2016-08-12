@@ -59,7 +59,6 @@ namespace HandwritingInstituteBillingSystem.Views
         {
             var value = Store.Get().GetLatest(e);
             value.AmountPaid = 0;
-            BillNoGenerator.IncrementBillSequence();
             value.BillNo = BillNoGenerator.Get();
             var partPayment = new PartPayment(value);
             partPayment.ShowDialog();

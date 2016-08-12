@@ -57,6 +57,7 @@ namespace HandwritingInstituteBillingSystem.CommonViewHandlers
 
         public static void OnInstallmentPayment(NewEntryViewModel e)
         {
+            BillNoGenerator.IncrementBillSequence();
             InstallmentPayment?.Invoke(null, e);
         }
 

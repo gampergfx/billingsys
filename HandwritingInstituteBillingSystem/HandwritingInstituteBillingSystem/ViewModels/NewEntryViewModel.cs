@@ -185,7 +185,7 @@ namespace HandwritingInstituteBillingSystem.ViewModels
         {
             get
             {
-                _balance = ((double)_course.Fee - (_totalAmountPaid + _amountPaid));
+                _balance = GetBalance();
                 if (_balance == 0)
                 {
                     return "0.0";
@@ -196,6 +196,11 @@ namespace HandwritingInstituteBillingSystem.ViewModels
             {
 
             }
+        }
+
+        private double GetBalance()
+        {
+            return ((double)_course.Fee - (_totalAmountPaid + _amountPaid));
         }
 
         public PayMode ModeOfPayment
@@ -283,6 +288,13 @@ namespace HandwritingInstituteBillingSystem.ViewModels
                 return false;
             }
 
+            if (GetBalance() < 0)
+            {
+                MessageBox.Show("Balance cannot be negative!");
+
+                return false;
+            }
+
             return true;
         }
 
@@ -296,6 +308,13 @@ namespace HandwritingInstituteBillingSystem.ViewModels
             if (_amountPaid.CompareTo(0) == 0)
             {
                 MessageBox.Show("Amount paid is zero.");
+
+                return false;
+            }
+
+            if (GetBalance() < 0)
+            {
+                MessageBox.Show("Balance cannot be negative!");
 
                 return false;
             }
